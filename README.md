@@ -86,3 +86,13 @@ npm install -D @sveltejs/svelte-virtual-list
 ## Bugs and feedback
 
 Sapper is in early development, and may have the odd rough edge here and there. Please be vocal over on the [Sapper issue tracker](https://github.com/sveltejs/sapper/issues).
+
+
+## Notes
+
+[Setup tailwind for css](https://github.com/tailwindcss/setup-examples/tree/master/examples/sapper)
+```
+> yarn add tailwindcss postcss-cli -D
+> yarn add @fullhuman/postcss-purgecss
+> npx tailwind init tailwind.js
+```

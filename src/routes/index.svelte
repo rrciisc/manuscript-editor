@@ -32,7 +32,7 @@
 	<title>Manuscripts Editor</title>
 </svelte:head>
 
-<h1>Manuscript</h1>
+<h1 class="bg-purple-700 text-white md:bg-purple-100 md:text-black">Manuscripts</h1>
 
 <figure>
 	<img alt='Borat' src='great-success.png'>

@@ -1,3 +1,11 @@
+# WebApp Design
+
+1. Store Books as Blob containers in Azure Storage Account
+2. Book's metadata (name, description etc.) will be stored as metadata of container
+3. Each page is a blob inside a container (storage as image)
+4. Anonymous access to blob is allowed but enumberation of all blobs of a container, or of all containers in Azure Storage account is not allowed
+
+
 # sapper-template
 
 The default [Sapper](https://github.com/sveltejs/sapper) template, with branches for Rollup and webpack. To clone it and get started:
@@ -83,11 +91,6 @@ npm install -D @sveltejs/svelte-virtual-list
 ```
 
 
-## Bugs and feedback
-
-Sapper is in early development, and may have the odd rough edge here and there. Please be vocal over on the [Sapper issue tracker](https://github.com/sveltejs/sapper/issues).
-
-
 ## Notes
 
 [Setup tailwind for css](https://github.com/tailwindcss/setup-examples/tree/master/examples/sapper)
@@ -96,3 +99,8 @@ Sapper is in early development, and may have the odd rough edge here and there. 
 > yarn add @fullhuman/postcss-purgecss
 > npx tailwind init tailwind.js
 ```
+
+https://jvns.ca/blog/brag-documents/
+
+Stack: FE[sapper + tailwindcss/bulmacss] + BE[google firebase] + Hosting[netlify]
+https://adamwathan.me/uses/

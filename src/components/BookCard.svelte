@@ -33,7 +33,7 @@
 </style>
 
 <div class="book-card flex bg-white rounded-lg p-6 shadow-md m-2">
-	<img class="h-24 w-24 rounded-full mr-2" src="great-success.png" alt="Borat" />
+	<img class="h-24 w-24 rounded-full mr-2" src="mantra.jpeg" alt="Gayatri Mantra" />
 	<div class="text-left">
 		<h2 class="inline-block">
 			<span class="text-lg uppercase text-black-500">{bookName}</span>

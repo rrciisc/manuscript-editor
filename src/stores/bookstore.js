@@ -3,9 +3,9 @@ import { writable } from 'svelte/store';
 
 const STORAGE_ACCOUNT_ENDPOINT = "https://roopchoueditorapp.blob.core.windows.net";
 
-export const count = writable(0);
+export const books = writable([]);
 
-export const getBooks = async () => {
+export const loadBooks = async () => {
 	const url = `${STORAGE_ACCOUNT_ENDPOINT}/?comp=list&prefix=book&include=metadata&maxresults=10`;
 	const response = await fetch(url, {
 			method: 'GET',
@@ -13,9 +13,13 @@ export const getBooks = async () => {
 			cache: 'no-cache',
 			headers: getRequestHeaders()
 		});
-		const responseText = await response.text();
-		const doc = createDocument(responseText);
-		return Array.prototype.map.call(
+
+	const responseText = await response.text();
+	const doc = createDocument(responseText);
+
+	// update books store
+	books.set(
+		Array.prototype.map.call(
 			doc.querySelectorAll('Containers > Container'),
 			container => {
 				return {
@@ -25,5 +29,6 @@ export const getBooks = async () => {
 					bookDescription: container.querySelector('Metadata > description').textContent
 				};
 			}
-		);
+		)
+	);
 };

@@ -3,9 +3,14 @@ import { writable } from 'svelte/store';
 
 const STORAGE_ACCOUNT_ENDPOINT = "https://roopchoueditorapp.blob.core.windows.net";
 
+let booksLoaded = false;
 export const books = writable([]);
 
 export const loadBooks = async () => {
+	if (booksLoaded) {
+		return;
+	}
+
 	const url = `${STORAGE_ACCOUNT_ENDPOINT}/?comp=list&prefix=book&include=metadata&maxresults=10`;
 	const response = await fetch(url, {
 			method: 'GET',
@@ -31,4 +36,5 @@ export const loadBooks = async () => {
 			}
 		)
 	);
+	booksLoaded = true;
 };

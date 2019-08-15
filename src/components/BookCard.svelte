@@ -11,14 +11,26 @@
 			&& date1.getDate() === date2.getDate();
 	};
 
+	const hoursFormatter = new Intl.DateTimeFormat('en', {
+		hour12: true,
+		hour: '2-digit',
+		minute: '2-digit'
+	});
+
+	const daysFormatter = new Intl.DateTimeFormat('en', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	});
+
 	const getTimestamp = (date) => {
 		if (date) {
 			const now = new Date();
 			const cardDate = new Date(date);
 			if (isTheSameDay(now, cardDate)) {
-				return `${cardDate.getHours()}:${cardDate.getMinutes()}`;
+				return hoursFormatter.format(cardDate);
 			} else {
-				return `${cardDate.getDate()}/${cardDate.getMonth()+1}/${cardDate.getFullYear()}`;
+				return daysFormatter.format(cardDate);
 			}
 		}
 	};
@@ -33,7 +45,7 @@
 	}
 </style>
 
-<div class="book-card bg-white flex flex-col p-6 m-2 border rounded border-gray-400 justify-between leading-normal">
+<div class="book-card bg-white flex flex-col p-6 m-2 border rounded border-gray-400 justify-center leading-normal">
 	{#if isCreateCard}
 		<a class="text-center w-full text-lg uppercase hover:underline text-indigo-600" href="book">New book</a>
 	{:else}
@@ -45,7 +57,7 @@
       <img class="w-10 h-10 rounded-full mr-4" src="mantra.jpeg" alt="Gayatri Mantra">
       <div class="text-sm">
         <p class="text-gray-500">{timestamp}</p>
-        <a class="leading-none inline-block hover:underline text-indigo-500" href="abc">See more</a>
+        <a class="leading-none inline-block hover:underline text-indigo-500" href=".">See more</a>
       </div>
     </div>
 	{/if}

@@ -38,3 +38,7 @@ export const loadBooks = async () => {
 	);
 	booksLoaded = true;
 };
+
+export const createBook = async (bookName, bookDescription) => {
+	console.log(`book create: ${bookName}, ${bookDescription}`);
+};

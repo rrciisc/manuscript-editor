@@ -1,8 +1,9 @@
 <script>
-	export let id;
-	export let bookName;
-	export let bookDescription;
-	export let lastModified;
+	export let id = '';
+	export let bookName = '';
+	export let bookDescription = '';
+	export let lastModified = '';
+	export let isCreateCard = false;
 
 	const isTheSameDay = (date1, date2) => {
 		return date1.getFullYear() === date2.getFullYear()
@@ -32,14 +33,20 @@
 	}
 </style>
 
-<div class="book-card flex bg-white rounded-lg p-6 shadow-md m-2">
-	<img class="h-24 w-24 rounded-full mr-2" src="mantra.jpeg" alt="Gayatri Mantra" />
-	<div class="text-left">
-		<h2 class="inline-block">
-			<span class="text-lg uppercase text-black-500">{bookName}</span>
-			<span class="text-xs text-gray-500">{timestamp}</span>
-		</h2>
-		<div class="text-sm text-gray-600">{bookDescription}</div>
-		<a class="inline-block hover:underline pt-6 text-indigo-600" href="/">See more</a>
-	</div>
+<div class="book-card bg-white flex flex-col p-6 m-2 border rounded border-gray-400 justify-between leading-normal">
+	{#if isCreateCard}
+		<a class="text-center w-full text-lg uppercase hover:underline text-indigo-600" href="book">New book</a>
+	{:else}
+    <div class="mb-8">
+      <div class="text-black-900 uppercase font-bold text-xl mb-2">{bookName}</div>
+      <p class="text-gray-700 text-base">{bookDescription}</p>
+    </div>
+    <div class="flex items-center">
+      <img class="w-10 h-10 rounded-full mr-4" src="mantra.jpeg" alt="Gayatri Mantra">
+      <div class="text-sm">
+        <p class="text-gray-500">{timestamp}</p>
+        <a class="leading-none inline-block hover:underline text-indigo-500" href="abc">See more</a>
+      </div>
+    </div>
+	{/if}
 </div>

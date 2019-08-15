@@ -1,5 +1,9 @@
 <script>
+	import { onMount } from 'svelte';
+	import { loadBooks } from '../stores/bookstore.js';
+
 	export let segment;
+	onMount(async () => loadBooks());
 </script>
 
 <style>
@@ -50,7 +54,8 @@
 
 <nav>
 	<ul>
-		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>manuscripts</a></li>
+		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>library</a></li>
+		<li><a class='{segment === "book" ? "selected" : ""}' href='book'>book</a></li>
 		<li><a class='{segment === "about" ? "selected" : ""}' href='about'>about</a></li>
 	</ul>
 </nav>

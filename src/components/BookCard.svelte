@@ -3,6 +3,7 @@
 	export let bookName = '';
 	export let bookDescription = '';
 	export let lastModified = '';
+	export let pdfLink = '.';
 	export let isCreateCard = false;
 
 	const isTheSameDay = (date1, date2) => {
@@ -57,7 +58,7 @@
       <img class="w-10 h-10 rounded-full mr-4" src="mantra.jpeg" alt="Gayatri Mantra">
       <div class="text-sm">
         <p class="text-gray-500">{timestamp}</p>
-        <a class="leading-none inline-block hover:underline text-indigo-500" href=".">See more</a>
+        <a class="leading-none inline-block hover:underline text-indigo-500" href={pdfLink}>Read book</a>
       </div>
     </div>
 	{/if}

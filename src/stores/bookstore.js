@@ -26,12 +26,14 @@ export const loadBooks = async () => {
 	const loadedBooks = Array.prototype.map.call(
 			createDocument(responseText).querySelectorAll('Containers > Container'),
 			container => {
-				return {
+				let book = {
 					id: container.querySelector('Name').textContent,
 					lastModified: container.querySelector('Properties > Last-Modified').textContent,
 					bookName: container.querySelector('Metadata > name').textContent,
 					bookDescription: container.querySelector('Metadata > description').textContent
 				};
+				book['pdfLink'] = `${STORAGE_ACCOUNT_ENDPOINT}/${book.id}/pdf`;
+				return book;
 			}
 		);
 
@@ -76,6 +78,7 @@ export const createBook = async (bookName, bookDescription, fileData) => {
 		if (uploadResponse.status !== 201) {
 			console.error(`book file upload failed: ${response.status}`);
 		} else {
+			newBook['pdfLink'] = `${STORAGE_ACCOUNT_ENDPOINT}/${newBook.id}/pdf`;
 			library.update(lib => {
 				lib.books = [...lib.books, newBook];
 				lib.latestBookId += 1;

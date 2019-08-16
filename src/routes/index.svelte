@@ -1,6 +1,6 @@
 <script>
 	import BookCard from '../components/BookCard.svelte';
-	import { books } from '../stores/bookstore.js';
+	import { library } from '../stores/bookstore.js';
 </script>
 
 <svelte:head>
@@ -8,10 +8,10 @@
 </svelte:head>
 
 <div class="flex flex-wrap mb-2">
-	{#if $books.length === 0}
+	{#if !$library.loaded}
 		<div class="text-center w-full">Loading ...</div>
 	{:else}
-		{#each $books as book}
+		{#each $library.books as book}
 			<BookCard {...book} />
 		{/each}
 			<BookCard isCreateCard={true} />

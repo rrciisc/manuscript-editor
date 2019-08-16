@@ -3,14 +3,22 @@ import { writable } from 'svelte/store';
 
 const STORAGE_ACCOUNT_ENDPOINT = "https://roopchoueditorapp.blob.core.windows.net";
 
-let booksLoaded = false;
-let latestBookId = 0;
-export const books = writable([]);
+export const library = writable({ books: [], loaded: false, latestBookId: 0 });
+
+const getLibraryField = (key) => {
+	let ans = undefined;
+	library.update(lib => {
+		ans = lib[key];
+		return lib;
+	});
+	return ans;
+};
+
+const isLibraryLoaded = () => getLibraryField('loaded');
+const getLatestBookId = () => getLibraryField('latestBookId');
 
 export const loadBooks = async () => {
-	if (booksLoaded) {
-		return;
-	}
+	if (isLibraryLoaded()) { return; }
 
 	const url = `${STORAGE_ACCOUNT_ENDPOINT}/?comp=list&prefix=book&include=metadata&maxresults=10`;
 	const response = await fetch(url, { method: 'GET', mode: 'cors', cache: 'no-cache', headers: getHeaders('loadbooks') });
@@ -26,23 +34,24 @@ export const loadBooks = async () => {
 				};
 			}
 		);
+
+	let latestBookId = 0;
 	loadedBooks.sort((a, b) => Number(a.id.substr(5)) - Number(b.id.substr(5)));
 	if (loadedBooks.length > 0) {
 		const latestBook = loadedBooks[loadedBooks.length - 1];
 		latestBookId = Number(latestBook.id.substr(5));
 	}
 
-	books.set(loadedBooks);
-	booksLoaded = true;
+	library.set({ books: loadedBooks, loaded: true, latestBookId: latestBookId });
 };
 
 export const createBook = async (bookName, bookDescription, fileData) => {
-	if (!booksLoaded) {
+	if (!isLibraryLoaded()) {
 		console.warn('book store not yet ready for new book creation.');
 		return;
 	}
 
-	const bookId = `book-${latestBookId+1}`;
+	const bookId = `book-${getLatestBookId()+1}`;
 	const url = `${STORAGE_ACCOUNT_ENDPOINT}/${bookId}?restype=container`;
 	const response = await fetch(url, { method: 'PUT', mode: 'cors', cache: 'no-cache',
 		headers: getHeaders('createbook', {bookName, bookDescription, bookId})
@@ -67,9 +76,11 @@ export const createBook = async (bookName, bookDescription, fileData) => {
 		if (uploadResponse.status !== 201) {
 			console.error(`book file upload failed: ${response.status}`);
 		} else {
-			// update store list
-			latestBookId += 1;
-			books.update(n => [...n, newBook]);
+			library.update(lib => {
+				lib.books = [...lib.books, newBook];
+				lib.latestBookId += 1;
+				return lib;
+			});
 		}
 	}
 };

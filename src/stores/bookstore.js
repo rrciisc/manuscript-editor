@@ -13,13 +13,7 @@ export const loadBooks = async () => {
 	}
 
 	const url = `${STORAGE_ACCOUNT_ENDPOINT}/?comp=list&prefix=book&include=metadata&maxresults=10`;
-	const response = await fetch(url, {
-			method: 'GET',
-			mode: 'cors',
-			cache: 'no-cache',
-			headers: getHeaders('loadbooks')
-		});
-
+	const response = await fetch(url, { method: 'GET', mode: 'cors', cache: 'no-cache', headers: getHeaders('loadbooks') });
 	const responseText = await response.text();
 	const loadedBooks = Array.prototype.map.call(
 			createDocument(responseText).querySelectorAll('Containers > Container'),
@@ -42,7 +36,7 @@ export const loadBooks = async () => {
 	booksLoaded = true;
 };
 
-export const createBook = async (bookName, bookDescription) => {
+export const createBook = async (bookName, bookDescription, fileData) => {
 	if (!booksLoaded) {
 		console.warn('book store not yet ready for new book creation.');
 		return;
@@ -50,10 +44,7 @@ export const createBook = async (bookName, bookDescription) => {
 
 	const bookId = `book-${latestBookId+1}`;
 	const url = `${STORAGE_ACCOUNT_ENDPOINT}/${bookId}?restype=container`;
-	const response = await fetch(url, {
-		method: 'PUT',
-		mode: 'cors',
-		cache: 'no-cache',
+	const response = await fetch(url, { method: 'PUT', mode: 'cors', cache: 'no-cache',
 		headers: getHeaders('createbook', {bookName, bookDescription, bookId})
 	});
 	if (response.status !== 201) {
@@ -66,6 +57,19 @@ export const createBook = async (bookName, bookDescription) => {
 			}
 		});
 		const newBook = { id: bookId, bookName, bookDescription, lastModified };
-		books.update(n => [...n, newBook]);
+
+		// upload file
+		const uploadUrl = `${STORAGE_ACCOUNT_ENDPOINT}/${bookId}/pdf`;
+		const uploadResponse = await fetch(uploadUrl, { method: 'PUT', mode: 'cors', cache: 'no-cache',
+			headers: getHeaders('uploadbook', {bookId}), body: fileData
+		});
+
+		if (uploadResponse.status !== 201) {
+			console.error(`book file upload failed: ${response.status}`);
+		} else {
+			// update store list
+			latestBookId += 1;
+			books.update(n => [...n, newBook]);
+		}
 	}
 };

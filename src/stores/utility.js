@@ -2,7 +2,7 @@ const masterKey = "Gg8iXkSPlLJQv6nKq5yrejRqWRDzCyifpu+YB+rhcQYZBDLkg5CuOBY3DoCkt
 let domParser = undefined;
 
 export const getHeaders = (operationName, options) => {
-	const ContentMD5 = ''; const ContentType = ''; const xDate = '';
+	const ContentMD5 = ''; let ContentType = ''; const xDate = '';
 	const key = CryptoJS.enc.Base64.parse(masterKey);
 	const headers = {
 		'x-ms-date': new Date().toUTCString(),
@@ -22,6 +22,15 @@ export const getHeaders = (operationName, options) => {
 														 'x-ms-meta-name:' + headers['x-ms-meta-name'] + "\n" +
 														 'x-ms-version:' + headers['x-ms-version'];
 			CanonicalizedResource += options.bookId;
+			break;
+		case 'uploadbook':
+			VERB = 'PUT';
+			ContentType = headers['Content-Type'] = 'application/pdf';
+			headers['x-ms-blob-type'] = 'BlockBlob';
+			CanonicalizedHeaders = 'x-ms-blob-type:' + headers['x-ms-blob-type'] + "\n" +
+														 'x-ms-date:' + headers['x-ms-date'] + "\n" +
+														 'x-ms-version:' + headers['x-ms-version'];
+			CanonicalizedResource += `${options.bookId}/pdf`;
 			break;
 		case 'loadbooks':
 			VERB = 'GET';

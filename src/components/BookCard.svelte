@@ -48,7 +48,7 @@
 
 <div class="book-card bg-white flex flex-col p-6 m-2 border rounded border-gray-400 justify-center leading-normal">
 	{#if isCreateCard}
-		<a class="text-center w-full text-lg uppercase hover:underline text-indigo-600" href="book">New book</a>
+		<a class="text-center w-full text-lg uppercase hover:underline text-indigo-600" href="addbook">New book</a>
 	{:else}
     <div class="mb-8">
       <div class="text-black-900 uppercase font-bold text-xl mb-2">{bookName}</div>
@@ -58,7 +58,7 @@
       <img class="w-10 h-10 rounded-full mr-4" src="mantra.jpeg" alt="Gayatri Mantra">
       <div class="text-sm">
         <p class="text-gray-500">{timestamp}</p>
-        <a class="leading-none inline-block hover:underline text-indigo-500" href={pdfLink}>Read book</a>
+        <a class="leading-none inline-block hover:underline text-indigo-500" href="readbook?id={id}&bookName={bookName}">Read book</a>
       </div>
     </div>
 	{/if}

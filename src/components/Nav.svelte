@@ -55,7 +55,10 @@
 <nav>
 	<ul>
 		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>library</a></li>
-		<li><a class='{segment === "book" ? "selected" : ""}' href='book'>book</a></li>
-		<li><a class='{segment === "about" ? "selected" : ""}' href='about'>about</a></li>
+		{#if segment === "addbook"}
+			<li><a class='{segment === "addbook" ? "selected" : ""}' href='addbook'>add book</a></li>
+		{:else if segment === "readbook"}
+			<li><a class='{segment === "readbook" ? "selected" : ""}' href='readbook'>reader</a></li>
+		{/if}
 	</ul>
 </nav>

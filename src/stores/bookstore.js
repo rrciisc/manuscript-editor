@@ -1,7 +1,7 @@
 import { getHeaders, createDocument } from './utility.js';
 import { writable } from 'svelte/store';
 
-const STORAGE_ACCOUNT_ENDPOINT = "https://roopchoueditorapp.blob.core.windows.net";
+export const STORAGE_ACCOUNT_ENDPOINT = "https://roopchoueditorapp.blob.core.windows.net";
 
 export const library = writable({ books: [], loaded: false, latestBookId: 0 });
 

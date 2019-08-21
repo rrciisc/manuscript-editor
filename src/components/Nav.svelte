@@ -54,7 +54,8 @@
 
 <nav>
 	<ul>
-		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>library</a></li>
+		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>editor</a></li>
+		<li><a class='{segment === "library" ? "selected" : ""}' href='library'>library</a></li>
 		{#if segment === "addbook"}
 			<li><a class='{segment === "addbook" ? "selected" : ""}' href='addbook'>add book</a></li>
 		{:else if segment === "readbook"}

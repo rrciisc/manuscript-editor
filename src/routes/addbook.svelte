@@ -11,7 +11,7 @@
     const fileData = new FormData();
     fileData.append('files[]', event.target.file.files[0]);
     await createBook(bookName, bookDescription, fileData);
-    sapper.goto('.');
+    sapper.goto('library');
   }
 </script>
 

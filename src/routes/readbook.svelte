@@ -13,33 +13,63 @@
 
 	export let pdfUrl = '';
 	export let bookName = '';
-	let pdfCanvas;
 	let componentReady = false;
+
+	// pdf state
+	let pdfCanvas;
+	let pdfDoc = null;
+	let currentPageNumber = '';
+	let totalPages = '';
+	let pageRendering = false;
+	let pageNumPending = null;
+	let canvasContext = null;
+
+	/**
+	 * Get page info from document and render page.
+	 * @param num Page number
+	 */
+	const renderPage = async (num) => {
+		pageRendering = true;
+		currentPageNumber = num;
+		const pdfPage = await pdfDoc.getPage(num);
+		console.log(`Page (${num}) loaded`);
+		const viewport = pdfPage.getViewport({ scale: 1.5 });
+		pdfCanvas.height = viewport.height;
+		pdfCanvas.width = viewport.width;
+
+		await pdfPage.render({ canvasContext, viewport });
+		console.log(`Page (${num}) rendered`);
+		pageRendering = false;
+		if (pageNumPending !== null) {
+			renderPage(pageNumPending);
+			pageNumPending = null;
+		}
+	};
+
+	/**
+	 * If another page rendering in progress, waits until the rendering is
+	 * finised. Otherwise, executes rendering immediately.
+	 */
+	const queueRenderPage = (num) => {
+	  if (pageRendering) {
+	    pageNumPending = num;
+	  } else {
+	    renderPage(num);
+	  }
+	};
 
 	const onReadyCallback = async () => {
 		console.log('Reader component mounted');
-		if (!pdfUrl) {
-			return;
-		}
+		if (!pdfUrl) { return; }
 
 		const pdfjsLib = window['pdfjs-dist/build/pdf'];
 		// Asynchronous download of PDF
-		const pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
+		pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
 		console.log(`pdf ${pdfUrl} loaded`);
-		// Fetch the first page
-		const pdfPage = await pdfDoc.getPage(1);
-		console.log('First Page loaded');
-		// Prepare canvas using PDF page dimensions
-		const viewport = pdfPage.getViewport({ scale: 1.5 });
-		pdfCanvas.width = viewport.width;
-		pdfCanvas.height = viewport.height;
-		const canvasContext = pdfCanvas.getContext('2d');
-
-		// render pdf page into canvas context
-		pdfPage.render({ canvasContext, viewport }).promise.then(() => {
-			componentReady = true;
-			console.log('Page rendered');
-		});
+		totalPages = pdfDoc.numPages;
+		canvasContext = pdfCanvas.getContext('2d');
+		await renderPage(1);
+		componentReady = true;
 	};
 
 	const timeout = async (ms) => {
@@ -53,6 +83,15 @@
 		}
 		onReadyCallback();
 	});
+
+	const handlePrevious = (event) => {
+		if (currentPageNumber <= 1) { return; }
+		queueRenderPage(currentPageNumber-1);
+	};
+	const handleNext = (event) => {
+		if (currentPageNumber >= totalPages) { return; }
+		queueRenderPage(currentPageNumber+1);
+	};
 </script>
 
 <style>
@@ -61,10 +100,17 @@
 	}
 </style>
 
-<h2 class="text-center w-full mb-8">Book Name: {bookName}</h2>
-
 {#if !componentReady}
 	<div class="text-center w-full">Loading ...</div>
+{:else}
+	<div class="text-center w-full mb-8">
+  <button class="leading-none inline-block hover:underline text-indigo-500" on:click|preventDefault={handlePrevious}>Previous</button>
+  <button class="leading-none inline-block hover:underline text-indigo-500" on:click|preventDefault={handleNext}>Next</button>
+  &nbsp; &nbsp;
+  <span>Page: <span>{currentPageNumber}</span> / <span>{totalPages}</span></span>
+	&nbsp; &nbsp;
+	<span>Book Name: <em>{bookName}</em></span>
+</div>
 {/if}
 <canvas class="{!componentReady ? 'hide' : ''} text-center w-full"
 	bind:this={pdfCanvas}>

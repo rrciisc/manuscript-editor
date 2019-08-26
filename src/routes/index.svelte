@@ -20,6 +20,7 @@
 		}
 	};
 
+	let txtAreaEl;
 	let textAreaText = '';
 
 	const moveToNextPosition = () => {
@@ -34,7 +35,7 @@
 		}
 	};
 
-	const handleKeyDownTextArea = (event) => {
+	const handleKeyDownTextArea = event => {
 		// Shift+Ctrl+ArrowRight
 		if (event.shiftKey && event.ctrlKey && event.keyCode === 39) {
 			moveToNextPosition();
@@ -45,6 +46,26 @@
 			moveToPreviousPosition();
 			event.preventDefault();
 		}
+	};
+
+	const handleDragStart = event => {
+		const style = window.getComputedStyle(event.target, null);
+		const relativeX = parseInt(style.getPropertyValue("left"), 10) - event.clientX;
+		const relativeY = parseInt(style.getPropertyValue("top"), 10) - event.clientY;
+    event.dataTransfer.setData("text/plain", `${relativeX},${relativeY}`);
+	};
+
+	const handleDragOver = event => {
+		event.preventDefault();
+		return false;
+	};
+
+	const handleDrop = event => {
+		const offset = event.dataTransfer.getData("text/plain").split(',');
+		const relativeX = parseInt(offset[0], 10);
+		const relativeY = parseInt(offset[1], 10);
+    txtAreaEl.style.left = `${event.clientX + relativeX}px`;
+    txtAreaEl.style.top = `${event.clientY + relativeY}px`;
 	};
 </script>
 
@@ -58,24 +79,32 @@
 
 	textarea {
 		position: fixed;
-		top: 300px;
-		left: 100px;
+		top: 400px;
+		left: 50px;
 	}
 </style>
 
-<div class="editor-image">
-	{#each rectangles as rectangle, i}
-		<CharRectangle
-			{...rectangle}
-			selected={selectedRectangleIdx === i}
-			idx={i}
-			on:clickRectangle={handleClickRectangle}
-		/>
-	{/each}
+<div on:dragover|preventDefault|stopPropagation=""
+		on:drop|preventDefault|stopPropagation={handleDrop}
+	>
+	<!-- Image with Rectangles-->
+	<div class="editor-image">
+		{#each rectangles as rectangle, i}
+			<CharRectangle
+				{...rectangle}
+				selected={selectedRectangleIdx === i}
+				idx={i}
+				on:clickRectangle={handleClickRectangle}
+			/>
+		{/each}
+	</div>
+	<!-- Text Area to capture user input -->
+​	<textarea class="bg-gray-300"
+						rows="10" cols="70"
+						bind:value={textAreaText}
+						on:keydown|stopPropagation={handleKeyDownTextArea}
+						draggable="true"
+						bind:this={txtAreaEl}
+						on:dragstart={handleDragStart}
+		></textarea>
 </div>
-
-​<textarea class="bg-gray-300"
-					rows="10" cols="70"
-					bind:value={textAreaText}
-					on:keydown|stopPropagation={handleKeyDownTextArea}
-	></textarea>

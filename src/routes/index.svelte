@@ -109,6 +109,8 @@
 						placeholder=
 "Enter text in this area
 
+This area is draggable and resizable for you to configure it as you want
+
 Navigate using
 Ctrl + Shift + RightArrow : to next symbol in image
 Ctrl + Shift +  LeftArrow : to previous symbol in image"

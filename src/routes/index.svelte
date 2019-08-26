@@ -1,35 +1,81 @@
 <script>
-	import { onMount } from 'svelte';
-	let drawing;
-	let rectangle;
-	let selected = false;
+	import CharRectangle from '../components/CharRectangle.svelte';
 
-	onMount(async () => {
-		const width = 25;
-		const height = 30;
-		const draw = SVG(drawing).size(1280, 617);
+	const rectangles = [];
+	let left = 23;
+	for (let i = 0; i < 10; i++) {
+		rectangles.push({ top: 32, left: left, width: 48, height: 51 });
+		left += 48;
+	}
 
-		rectangle = draw.polyline([[0,0], [width,0], [width,height], [0,height], [0,0]]).fill('none').stroke({ color: '#fff', width: 2 });
-		rectangle.move(135, 115);
-	});
+	let selectedRectangleIdx = 0;
 
-	function handleClick(event) {
-		const newState = selected ? { color: '#fff', width: 2 } : { color: '#f06', width: 4 };
-		selected = !selected;
-		rectangle.stroke(newState);
+	const handleClickRectangle = (event) => {
+		if (event.detail.zoomed) {
+			selectedRectangleIdx = event.detail.idx;
+		} else {
+			if (event.detail.idx < rectangles.length-1) {
+				selectedRectangleIdx = selectedRectangleIdx+1;
+			}
+		}
+	};
+
+	let textAreaText = '';
+
+	const moveToNextPosition = () => {
+		if (selectedRectangleIdx < rectangles.length-1) {
+			selectedRectangleIdx++;
+		}
+	};
+
+	const moveToPreviousPosition = () => {
+		if (selectedRectangleIdx > 0) {
+			selectedRectangleIdx--;
+		}
+	};
+
+	const handleKeyDownTextArea = (event) => {
+		// Shift+Ctrl+ArrowRight
+		if (event.shiftKey && event.ctrlKey && event.keyCode === 39) {
+			moveToNextPosition();
+			event.preventDefault();
+		}
+		// Shift+Ctrl+ArrowLeft
+		if (event.shiftKey && event.ctrlKey && event.keyCode === 37) {
+			moveToPreviousPosition();
+			event.preventDefault();
+		}
 	};
 </script>
 
 <style>
 	.editor-image {
-		background-image: url('/image.jpeg');
-		width: 1280px;
-		height: 617px;
+		background-image: url('/Original.PNG');
+		width: 1587px;
+		height: 710px;
+		position: relative;
+	}
+
+	textarea {
+		position: fixed;
+		top: 300px;
+		left: 100px;
 	}
 </style>
 
-<!-- <img alt='manuscript page' src='image.jpeg' /> -->
-
 <div class="editor-image">
-	<div bind:this={drawing} on:click|preventDefault={handleClick}></div>
+	{#each rectangles as rectangle, i}
+		<CharRectangle
+			{...rectangle}
+			selected={selectedRectangleIdx === i}
+			idx={i}
+			on:clickRectangle={handleClickRectangle}
+		/>
+	{/each}
 </div>
+
+​<textarea class="bg-gray-300"
+					rows="10" cols="70"
+					bind:value={textAreaText}
+					on:keydown|stopPropagation={handleKeyDownTextArea}
+	></textarea>

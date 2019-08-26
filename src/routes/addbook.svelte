@@ -21,7 +21,7 @@
       <label class="label-sm md:label" for="inline-book-name">Book Name</label>
     </div>
     <div class="md:w-2/3">
-      <input class="label-input" id="inline-book-name" name="name" type="text" bind:value={bookName} />
+      <input class="label-input w-full" id="inline-book-name" name="name" type="text" bind:value={bookName} />
     </div>
   </div>
   <div class="md:flex md:items-center mb-6">
@@ -29,7 +29,7 @@
       <label class="label-sm md:label" for="inline-book-description">Description</label>
     </div>
     <div class="md:w-2/3">
-      <input class="label-input" id="inline-book-description" name="description" type="text" bind:value={bookDescription} />
+      <input class="label-input w-full" id="inline-book-description" name="description" type="text" bind:value={bookDescription} />
     </div>
   </div>
   <div class="md:flex md:items-center mb-6">
@@ -38,7 +38,7 @@
     </div>
     <div class="md:w-2/3">
       <input bind:value={localFileName}
-             class="label-input"
+             class="label-input w-full"
              name="file"
              id="inline-local-file-name"
              placeholder="Pick a file to upload"

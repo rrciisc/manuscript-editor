@@ -99,12 +99,18 @@
 		{/each}
 	</div>
 	<!-- Text Area to capture user input -->
-​	<textarea class="bg-gray-300"
+​	<textarea class="label-input resize"
 						rows="10" cols="70"
 						bind:value={textAreaText}
 						on:keydown|stopPropagation={handleKeyDownTextArea}
 						draggable="true"
 						bind:this={txtAreaEl}
 						on:dragstart={handleDragStart}
+						placeholder=
+"Enter text in this area
+
+Navigate using
+Ctrl + Shift + RightArrow : to next symbol in image
+Ctrl + Shift +  LeftArrow : to previous symbol in image"
 		></textarea>
 </div>

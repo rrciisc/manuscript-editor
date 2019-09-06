@@ -32,9 +32,9 @@
 
 	.zoom {
 		border-color: greenyellow;
-		border-width: 2px;
+		border-width: 1px;
 		transform: scale(2);
-		background-image: url('/Original.PNG');
+		background-image: url('/image.jpg');
 		z-index: 1000;
 	}
 </style>

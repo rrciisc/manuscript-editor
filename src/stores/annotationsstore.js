@@ -1,6 +1,12 @@
 import { writable, derived } from 'svelte/store';
 
-export const imageAnnotations = writable({ rectangleLines: [], loaded: false, imageName: '' });
+export const imageAnnotations = writable({
+	rectangleLines: [],
+	loaded: false,
+	imageName: '',
+	imageWidth: 0,
+	imageHeight: 0
+});
 
 const getStoreField = (key) => {
 	let ans = undefined;
@@ -50,7 +56,13 @@ export const loadImageAnnotations = async () => {
 	const res = await fetch(boundingRectsLocation);
 	const data = await res.text();
 	const lines = extractRectangles(data);
-	imageAnnotations.set({ rectangleLines: lines, loaded: true, imageName: imageLocation });
+	imageAnnotations.set({
+		rectangleLines: lines,
+		loaded: true,
+		imageName: imageLocation,
+		imageWidth: 2500,
+		imageHeight: 1207
+	});
 };
 
 export const rectangles = derived(

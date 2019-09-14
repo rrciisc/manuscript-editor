@@ -30,16 +30,12 @@
 		border-color: white;
 	}
 
-	.zoom {
+	.focus {
 		border-color: greenyellow;
-		border-width: 1px;
-		transform: scale(2);
-		background-image: url('/image.jpg');
-		z-index: 1000;
 	}
 </style>
 
-<div class="{selected ? 'zoom' : ''}"
+<div class="{selected ? 'focus' : ''}"
 		style="top: {top}px; left: {left}px; width: {width}px; height: {height}px;"
 		on:click|preventDefault|stopPropagation={handleClick}
 		bind:this={box}

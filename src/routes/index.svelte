@@ -11,9 +11,10 @@
 		await tick();
 		imageEl.style["background-image"] = `url(${$imageAnnotations.imageName})`;
 		const viewportWidth = imageEl.clientWidth;
-		const ratio = imageEl.clientWidth / 2500;
+		const ratio = imageEl.clientWidth / $imageAnnotations.imageWidth;
 		imageEl.style["transform"] = `scale(${ratio})`;
-		imageEl.style["width"] = "2500px";
+		imageEl.style["width"] = `${$imageAnnotations.imageWidth}px`;
+		imageEl.style["height"] = `${$imageAnnotations.imageHeight}px`;
 	};
 
 	onMount(async () => {
@@ -48,9 +49,6 @@
 
 <style>
 	.editor-image {
-		width: 100%;
-		height: 1207px;
-		position: relative;
 		transform-origin: 0 0;
 	}
 </style>
@@ -59,7 +57,7 @@
 {:else}
 	<ReadonlyText {moveToNextPosition} {moveToPreviousPosition} />
 	<!-- Image with Rectangles-->
-	<div class="editor-image" bind:this={imageEl}>
+	<div class="editor-image w-full h-full" bind:this={imageEl}>
 		{#each $rectangles as rectangle, i}
 			<CharRectangle
 				{...rectangle}

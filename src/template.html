@@ -19,9 +19,6 @@
 	<!-- This contains the contents of the <svelte:head> component, if
 	     the current page has one -->
 	%sapper.head%
-
-	<!-- Crypto-js -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js" integrity="sha256-u6BamZiW5tCemje2nrteKC2KoLIKX9lKPSpvCkOhamw=" crossorigin="anonymous"></script>
 </head>
 <body>
 	<!-- The application will be rendered inside this element,
@@ -32,16 +29,5 @@
 	     and anything else it needs to hydrate the app and
 	     initialise the router -->
 	%sapper.scripts%
-
-	<!-- pdf-js -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.228/pdf.min.js" integrity="sha256-+toLFVggqOkqWdaf1sm90mfo7CQo8OW2J31Bl+B/KKM=" crossorigin="anonymous"></script>
-	<script>
-		(function() {
-			// Loaded via <script> tag, create shortcut to access PDF.js exports.
-			const pdfjsLib = window['pdfjs-dist/build/pdf'];
-			// The workerSrc property shall be specified.
-			pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.228/pdf.worker.min.js';
-		}());
-	</script>
 </body>
 </html>

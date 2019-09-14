@@ -1,9 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
-	import { loadBooks } from '../stores/bookstore.js';
+	import { loadImageAnnotations } from '../stores/annotationsstore.js';
 
 	export let segment;
-	onMount(async () => loadBooks());
+	onMount(async () => loadImageAnnotations());
 </script>
 
 <style>
@@ -55,11 +55,5 @@
 <nav>
 	<ul>
 		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>editor</a></li>
-		<li><a class='{segment === "library" ? "selected" : ""}' href='library'>library</a></li>
-		{#if segment === "addbook"}
-			<li><a class='{segment === "addbook" ? "selected" : ""}' href='addbook'>add book</a></li>
-		{:else if segment === "readbook"}
-			<li><a class='{segment === "readbook" ? "selected" : ""}' href='readbook'>reader</a></li>
-		{/if}
 	</ul>
 </nav>

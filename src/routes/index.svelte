@@ -1,74 +1,35 @@
-<script context="module">
-
-	const extractRectangles = (text) => {
-		const textLines = text.split("\n");
-		const lines = [];
-		textLines.forEach(textline => {
-			try {
-				if (textline && textline !== "") {
-					const rectsTextArray = Array.from(textline.matchAll(/\((.*?)\)/g)).map(el => el[1]);
-					const line = [];
-					rectsTextArray.forEach(textrect => {
-						const nums = textrect.split(", ").map(el => +el);
-						line.push({
-							left: nums[0],
-							top: nums[1],
-							width: nums[2],
-							height: nums[3]
-						});
-					});
-					if (line.length > 0) {
-						lines.push(line);
-					}
-				}
-			} catch(e) {
-				// ignore
-			}
-		});
-
-		return lines;
-	};
-
-	export async function preload(page) {
-		const imageLocation = '/image.jpg';
-		const boundingRectsLocation = '/boundingrects.csv';
-
-		const res = await this.fetch(boundingRectsLocation);
-		const data = await res.text();
-		const lines = extractRectangles(data);
-		const rects = [];
-		lines.forEach(line => {
-			rects.push(...line);
-		});
-
-		return { imageName: imageLocation, rectangles: rects };
-	}
-</script>
-
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import CharRectangle from '../components/CharRectangle.svelte';
+	import { imageAnnotations, rectangles } from '../stores/annotationsstore.js';
 
-	export let imageName = '';
-	export let rectangles = [];
 	let imageEl;
 	let selectedRectangleIdx = 0;
 
-	onMount(async () => {
-		imageEl.style["background-image"] = `url(${imageName})`;
+	const adjustImageDimensions = async () => {
+		await tick();
+		imageEl.style["background-image"] = `url(${$imageAnnotations.imageName})`;
 		const viewportWidth = imageEl.clientWidth;
 		const ratio = imageEl.clientWidth / 2500;
 		const dx = Math.floor(2500 * ratio / 2);
 		const dy = Math.floor(1207 * ratio / 2);
 		imageEl.style["transform"] = `scale(${ratio}) translate(-${dx}px, -${dy}px)`;
 		imageEl.style["width"] = "2500px";
+	};
+
+	onMount(async () => {
+		imageAnnotations.subscribe(value => {
+			if (value.loaded) {
+				adjustImageDimensions();
+			}
+		});
 	});
 
 	const handleClickRectangle = (event) => {
 		if (event.detail.zoomed) {
 			selectedRectangleIdx = event.detail.idx;
 		} else {
-			if (event.detail.idx < rectangles.length-1) {
+			if (event.detail.idx < $rectangles.length-1) {
 				selectedRectangleIdx = selectedRectangleIdx+1;
 			}
 		}
@@ -78,7 +39,7 @@
 	let textAreaText = '';
 
 	const moveToNextPosition = () => {
-		if (selectedRectangleIdx < rectangles.length-1) {
+		if (selectedRectangleIdx < $rectangles.length-1) {
 			selectedRectangleIdx++;
 		}
 	};
@@ -131,13 +92,15 @@
 		left: 50px;
 	}
 </style>
-
+{#if !$imageAnnotations.loaded}
+	<div class="text-center w-full">Loading ...</div>
+{:else}
 <div on:dragover|preventDefault|stopPropagation=""
 		on:drop|preventDefault|stopPropagation={handleDrop}
 	>
 	<!-- Image with Rectangles-->
 	<div class="editor-image" bind:this={imageEl}>
-		{#each rectangles as rectangle, i}
+		{#each $rectangles as rectangle, i}
 			<CharRectangle
 				{...rectangle}
 				selected={selectedRectangleIdx === i}
@@ -161,6 +124,6 @@ This area is draggable and resizable for you to configure it as you want
 
 Navigate using
 Ctrl + Shift + RightArrow : to next symbol in image
-Ctrl + Shift +  LeftArrow : to previous symbol in image"
-		></textarea>
+Ctrl + Shift +  LeftArrow : to previous symbol in image"></textarea>
 </div>
+{/if}

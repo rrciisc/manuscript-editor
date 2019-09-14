@@ -12,9 +12,7 @@
 		imageEl.style["background-image"] = `url(${$imageAnnotations.imageName})`;
 		const viewportWidth = imageEl.clientWidth;
 		const ratio = imageEl.clientWidth / 2500;
-		const tx = 100 * ratio / 2;
-		const ty = 100 * ratio / 2;
-		imageEl.style["transform"] = `scale(${ratio}) translateX(-${tx}%) translateY(-${ty}%)`;
+		imageEl.style["transform"] = `scale(${ratio})`;
 		imageEl.style["width"] = "2500px";
 	};
 
@@ -53,6 +51,7 @@
 		width: 100%;
 		height: 1207px;
 		position: relative;
+		transform-origin: 0 0;
 	}
 </style>
 {#if !$imageAnnotations.loaded}

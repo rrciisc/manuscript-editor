@@ -5,8 +5,6 @@
 	import { imageAnnotations, rectangles } from '../stores/annotationsstore.js';
 
 	let imageEl;
-	let txtAreaLeft = 50;
-	let txtAreaTop = 400;
 	let selectedRectangleIdx = 0;
 
 	const adjustImageDimensions = async () => {
@@ -14,9 +12,9 @@
 		imageEl.style["background-image"] = `url(${$imageAnnotations.imageName})`;
 		const viewportWidth = imageEl.clientWidth;
 		const ratio = imageEl.clientWidth / 2500;
-		const dx = Math.floor(2500 * ratio / 2);
-		const dy = Math.floor(1207 * ratio / 2);
-		imageEl.style["transform"] = `scale(${ratio}) translate(-${dx}px, -${dy}px)`;
+		const tx = 100 * ratio / 2;
+		const ty = 100 * ratio / 2;
+		imageEl.style["transform"] = `scale(${ratio}) translateX(-${tx}%) translateY(-${ty}%)`;
 		imageEl.style["width"] = "2500px";
 	};
 
@@ -48,13 +46,6 @@
 			selectedRectangleIdx--;
 		}
 	};
-	const handleReadonlyTextDrop = event => {
-		const offset = event.dataTransfer.getData("text/plain").split(',');
-		const relativeX = parseInt(offset[0], 10);
-		const relativeY = parseInt(offset[1], 10);
-		txtAreaLeft = event.clientX + relativeX;
-		txtAreaTop = event.clientY + relativeY;
-	};
 </script>
 
 <style>
@@ -67,9 +58,7 @@
 {#if !$imageAnnotations.loaded}
 	<div class="text-center w-full">Loading ...</div>
 {:else}
-<div on:dragover|preventDefault|stopPropagation=""
-		on:drop|preventDefault|stopPropagation={handleReadonlyTextDrop}
-	>
+	<ReadonlyText {moveToNextPosition} {moveToPreviousPosition} />
 	<!-- Image with Rectangles-->
 	<div class="editor-image" bind:this={imageEl}>
 		{#each $rectangles as rectangle, i}
@@ -81,7 +70,4 @@
 			/>
 		{/each}
 	</div>
-	<!-- Text Area to capture user input -->
-	<ReadonlyText locationLeft={txtAreaLeft} locationTop={txtAreaTop} {moveToNextPosition} {moveToPreviousPosition} />
-​</div>
 {/if}

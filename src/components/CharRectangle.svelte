@@ -8,6 +8,13 @@
 	export let idx;
 
 	let box;
+	let boxClass = '';
+	$: if ($selectedRectangleIdx === idx) {
+		boxClass = 'focus';
+		box && box.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+	} else {
+		boxClass = '';
+	}
 </script>
 
 <style>
@@ -23,7 +30,7 @@
 	}
 </style>
 
-<div class="{$selectedRectangleIdx === idx ? 'focus' : ''}"
+<div class="{boxClass}"
 		style="top: {top}px; left: {left}px; width: {width}px; height: {height}px;"
 		bind:this={box}
 	></div>

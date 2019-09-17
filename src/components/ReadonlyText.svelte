@@ -1,19 +1,19 @@
 <!-- Text Area to capture user input -->
 <script>
-	export let moveToPreviousPosition = () => {};
-	export let moveToNextPosition = () => {};
+	import { imageAnnotations } from '../stores/annotationsstore.js';
+
 	let txtAreaEl;
 	let textAreaText = '';
 
 	const handleKeyDown = event => {
 		// Shift+Ctrl+ArrowRight
 		if (event.shiftKey && event.ctrlKey && event.keyCode === 39) {
-			moveToNextPosition();
+			imageAnnotations.moveToNextRectangle();
 			event.preventDefault();
 		}
 		// Shift+Ctrl+ArrowLeft
 		if (event.shiftKey && event.ctrlKey && event.keyCode === 37) {
-			moveToPreviousPosition();
+			imageAnnotations.moveToPreviousRectangle();
 			event.preventDefault();
 		}
 	};

@@ -51,9 +51,10 @@
 		display: block;
 	}
 </style>
-
+<!--
 <nav>
 	<ul>
 		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>editor</a></li>
 	</ul>
 </nav>
+-->

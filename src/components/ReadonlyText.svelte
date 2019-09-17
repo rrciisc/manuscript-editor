@@ -19,8 +19,13 @@
 	};
 </script>
 
+<style>
+textarea {
+	height: 25vh;
+}
+</style>
+
 <textarea class="label-input resize w-full"
-						rows="10"
 						bind:this={txtAreaEl}
 						bind:value={textAreaText}
 						on:keydown|stopPropagation={handleKeyDown}

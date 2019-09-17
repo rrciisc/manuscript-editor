@@ -20,8 +20,6 @@
 			ratio = zoomLevel.id;
 		}
 		imageEl.style["transform"] = `scale(${ratio})`;
-		imageEl.style["width"] = `${$imageAnnotations.imageWidth}px`;
-		imageEl.style["height"] = `${$imageAnnotations.imageHeight}px`;
 	};
 
 	const initCanvas = async () => {
@@ -30,6 +28,8 @@
 		imageEl.style["background-image"] = `url(${$imageAnnotations.imageName})`;
 		viewportWidth = imageEl.clientWidth;
 		setZoomLevel(zoomLevels[0]);	// page-width level
+		imageEl.style["width"] = `${$imageAnnotations.imageWidth}px`;
+		imageEl.style["height"] = `${$imageAnnotations.imageHeight}px`;
 	};
 
 	imageAnnotations.subscribe(value => {
@@ -40,8 +40,11 @@
 </script>
 
 <style>
-	div {
+	#canvas {
 		transform-origin: 0 0;
+	}
+	#container {
+		height: 65vh;
 	}
 </style>
 
@@ -50,6 +53,8 @@
 		<option value={zoomLevel}>{zoomLevel.text}</option>
 	{/each}
 </select>
-<div class="w-full h-full" bind:this={imageEl}>
-	<slot></slot>
+<div class="h-full w-full overflow-scroll" id="container">
+	<div class="h-full overflow-x-scroll" id="canvas" bind:this={imageEl}>
+		<slot></slot>
+	</div>
 </div>

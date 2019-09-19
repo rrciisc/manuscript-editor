@@ -21,8 +21,10 @@ const createImageAnnotations = () => {
 		return ans;
 	};
 
-	const moveToPreviousRectangle = () => {
+	const moveToPreviousRectangle = (data) => {
 		update(annot => {
+			const currentLine = annot.rectangleLines[annot.selectedLine];
+			currentLine[annot.selectedColumn].data = data;
 			if (annot.selectedLine === 0 && annot.selectedColumn <= 0) {
 				return annot;
 			}
@@ -39,15 +41,16 @@ const createImageAnnotations = () => {
 		});
 	};
 
-	const moveToNextRectangle = () => {
+	const moveToNextRectangle = (data) => {
 		update(annot => {
 			if (annot.selectedLine >= annot.rectangleLines.length) {
 				return annot;
 			}
-			if (annot.selectedLine === (annot.rectangleLines.length-1) && annot.selectedColumn === (annot.rectangleLines[annot.selectedLine].length-1)) {
+			const currentLine = annot.rectangleLines[annot.selectedLine];
+			currentLine[annot.selectedColumn].data = data;
+			if (annot.selectedLine === (annot.rectangleLines.length-1) && annot.selectedColumn === (currentLine.length-1)) {
 				return annot;
 			}
-			const currentLine = annot.rectangleLines[annot.selectedLine];
 			if ((annot.selectedColumn+1) < currentLine.length) {
 				annot.selectedColumn += 1;
 			} else if ((annot.selectedColumn+1) === currentLine.length) {
@@ -88,7 +91,8 @@ const extractRectangles = (text) => {
 							left: nums[0],
 							top: nums[1],
 							width: nums[2],
-							height: nums[3]
+							height: nums[3],
+							data: ""
 						});
 					});
 					if (line.length > 0) {
@@ -149,3 +153,14 @@ export const selectedRectangleIdx = derived(imageAnnotations, $imageAnnotations 
 		return idx;
 	}
 );
+
+export const annotatedData = derived(imageAnnotations, $imageAnnotations => {
+	let data = "";
+	$imageAnnotations.rectangleLines.forEach(line => {
+		line.forEach(rectangle => {
+			data += rectangle.data;
+		});
+		data += "\n";
+	});
+	return data;
+});

@@ -7,6 +7,7 @@
 	export let width;
 	export let height;
 	export let idx;
+	export let data;
 
 	let box; let inputBox; let line;
 	let boxClass = '';
@@ -79,15 +80,22 @@
 	const handleKeyDown = event => {
 		// Space
 		if (!event.shiftKey && event.keyCode === 32) {
-			imageAnnotations.moveToNextRectangle();
+			imageAnnotations.moveToNextRectangle(data);
 			event.preventDefault();
 			event.stopPropagation();
+			return;
 		}
 		// Shift+Space
 		if (event.shiftKey && event.keyCode === 32) {
-			imageAnnotations.moveToPreviousRectangle();
+			imageAnnotations.moveToPreviousRectangle(data);
 			event.preventDefault();
 			event.stopPropagation();
+			return;
+		}
+
+		// ignore Enter key as that is consumed by global event listener to toggle rectangles visibility
+		if (event.keyCode === 13) {
+			return;
 		}
 	};
 </script>
@@ -116,5 +124,6 @@
 		<input class="appearance-none {boxClass === 'focus' ? '' : 'hidden'} leading-tight w-12 h-12 px-1 py-1 absolute bg-purple-200"
 			style="top: -6rem; left: 3rem"
 			type="text" bind:this={inputBox}
-			on:keydown={handleKeyDown} />
+			on:keydown={handleKeyDown}
+			bind:value={data} />
 </div>

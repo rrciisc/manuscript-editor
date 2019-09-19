@@ -8,7 +8,8 @@ const createImageAnnotations = () => {
 		imageWidth: 0,
 		imageHeight: 0,
 		selectedLine: 0,
-		selectedColumn: 0
+		selectedColumn: 0,
+		showAnnotations: true
 	});
 
 	const getField = (key) => {
@@ -57,10 +58,17 @@ const createImageAnnotations = () => {
 		});
 	};
 
+	const toggleAnnotationsVisibility = () => {
+		update(annot => {
+			annot.showAnnotations = !annot.showAnnotations;
+			return annot;
+		});
+	};
+
 	return { subscribe, set, update,
 		getKey: (key) => getField(key),
 		areLoaded: () => getField('loaded'),
-		moveToPreviousRectangle, moveToNextRectangle
+		moveToPreviousRectangle, moveToNextRectangle, toggleAnnotationsVisibility
 	};
 };
 
@@ -111,7 +119,8 @@ export const loadImageAnnotations = async () => {
 		imageWidth: 2500,
 		imageHeight: 1207,
 		selectedLine: 0,
-		selectedColumn: 0
+		selectedColumn: 0,
+		showAnnotations: true
 	});
 };
 

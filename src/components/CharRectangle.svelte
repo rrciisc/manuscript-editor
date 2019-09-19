@@ -1,6 +1,6 @@
 <script>
 	import { tick, onMount } from 'svelte';
-	import { selectedRectangleIdx } from '../stores/annotationsstore.js';
+	import { selectedRectangleIdx, imageAnnotations } from '../stores/annotationsstore.js';
 
 	export let top;
 	export let left;
@@ -63,12 +63,33 @@
 		}
 	};
 
+	const setFocus = async () => {
+		await tick();
+		inputBox && inputBox.focus();
+	};
+
 	$: if ($selectedRectangleIdx === idx) {
 		boxClass = 'focus';
 		box && box.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+		setFocus();
 	} else {
 		boxClass = '';
 	}
+
+	const handleKeyDown = event => {
+		// Space
+		if (!event.shiftKey && event.keyCode === 32) {
+			imageAnnotations.moveToNextRectangle();
+			event.preventDefault();
+			event.stopPropagation();
+		}
+		// Shift+Space
+		if (event.shiftKey && event.keyCode === 32) {
+			imageAnnotations.moveToPreviousRectangle();
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	};
 </script>
 
 <style>
@@ -94,5 +115,6 @@
 	>
 		<input class="appearance-none {boxClass === 'focus' ? '' : 'hidden'} leading-tight w-12 h-12 px-1 py-1 absolute bg-purple-200"
 			style="top: -6rem; left: 3rem"
-			type="text" bind:this={inputBox} />
+			type="text" bind:this={inputBox}
+			on:keydown={handleKeyDown} />
 </div>

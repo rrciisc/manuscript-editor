@@ -1,8 +1,6 @@
 <script>
-	import { tick, createEventDispatcher } from 'svelte';
+	import { tick } from 'svelte';
 	import { imageAnnotations } from '../stores/annotationsstore.js';
-
-	const dispatch = createEventDispatcher();
 
 	const zoomLevels = [
 		{ id: 0, text: 'Screen Width' },
@@ -12,10 +10,9 @@
 		{ id: 4, text: '4x' }
 	];
 	let selectedZoomLevel;
-	export let showAnnotations = true;
 
 	const handleCheckboxToggle = (_event) => {
-		dispatch('toggleRectangleVisibility', { show: showAnnotations });
+		imageAnnotations.toggleAnnotationsVisibility();
 	};
 
 	let imageEl;
@@ -66,7 +63,7 @@
 	</span>
 	<span class="self-end">
 		<label class="label">Show Annotations: </label>
-		<input type="checkbox" bind:checked={showAnnotations} on:change="{() => handleCheckboxToggle()}" />
+		<input type="checkbox" checked="{$imageAnnotations.showAnnotations}" on:change="{() => handleCheckboxToggle()}" />
 	</span>
 </div>
 <div class="h-full w-full overflow-scroll" id="container">

@@ -1,9 +1,18 @@
 <script>
 	import { onMount } from 'svelte';
-	import { loadImageAnnotations } from '../stores/annotationsstore.js';
+	import { loadImageAnnotations, imageAnnotations } from '../stores/annotationsstore.js';
 
 	export let segment;
-	onMount(async () => loadImageAnnotations());
+	onMount(async () => {
+		document.addEventListener('keydown', event => {
+			// enter : toggle visibility of annotations
+		if (event.keyCode === 13) {
+			imageAnnotations.toggleAnnotationsVisibility();
+			event.preventDefault();
+		}
+		});
+		loadImageAnnotations();
+	});
 </script>
 
 <style>
@@ -51,10 +60,8 @@
 		display: block;
 	}
 </style>
-<!--
-<nav>
+<nav class="hidden">
 	<ul>
 		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>editor</a></li>
 	</ul>
 </nav>
--->

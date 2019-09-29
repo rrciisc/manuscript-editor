@@ -6,11 +6,14 @@
 	onMount(async () => {
 		document.addEventListener('keydown', event => {
 			// enter : toggle visibility of annotations
-		if (event.keyCode === 13) {
-			imageAnnotations.toggleAnnotationsVisibility();
-			event.preventDefault();
-		}
+			if (event.keyCode === 13) {
+				imageAnnotations.toggleAnnotationsVisibility();
+				event.preventDefault();
+				event.stopPropagation();
+				return;
+			}
 		});
+
 		loadImageAnnotations();
 	});
 </script>

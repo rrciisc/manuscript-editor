@@ -2,7 +2,7 @@ import { writable, derived } from 'svelte/store';
 
 const createImageAnnotations = () => {
 	const { subscribe, set, update } = writable({
-		rectangleLines: [],
+		lines: [],
 		loaded: false,
 		imageName: '',
 		imageWidth: 0,
@@ -23,8 +23,8 @@ const createImageAnnotations = () => {
 
 	const moveToPreviousRectangle = (data) => {
 		update(annot => {
-			const currentLine = annot.rectangleLines[annot.selectedLine];
-			currentLine[annot.selectedColumn].data = data;
+			const currentLine = annot.lines[annot.selectedLine];
+			currentLine.rectangles[annot.selectedColumn].data = data;
 			if (annot.selectedLine === 0 && annot.selectedColumn <= 0) {
 				return annot;
 			}
@@ -34,8 +34,8 @@ const createImageAnnotations = () => {
 			}
 			if (annot.selectedColumn <= 0) {
 				annot.selectedLine -= 1;
-				const prevLine = annot.rectangleLines[annot.selectedLine];
-				annot.selectedColumn = prevLine.length - 1;
+				const prevLine = annot.lines[annot.selectedLine];
+				annot.selectedColumn = prevLine.rectangles.length - 1;
 				return annot;
 			}
 		});
@@ -43,17 +43,17 @@ const createImageAnnotations = () => {
 
 	const moveToNextRectangle = (data) => {
 		update(annot => {
-			if (annot.selectedLine >= annot.rectangleLines.length) {
+			if (annot.selectedLine >= annot.lines.length) {
 				return annot;
 			}
-			const currentLine = annot.rectangleLines[annot.selectedLine];
-			currentLine[annot.selectedColumn].data = data;
-			if (annot.selectedLine === (annot.rectangleLines.length-1) && annot.selectedColumn === (currentLine.length-1)) {
+			const currentLine = annot.lines[annot.selectedLine];
+			currentLine.rectangles[annot.selectedColumn].data = data;
+			if (annot.selectedLine === (annot.lines.length-1) && annot.selectedColumn === (currentLine.rectangles.length-1)) {
 				return annot;
 			}
-			if ((annot.selectedColumn+1) < currentLine.length) {
+			if ((annot.selectedColumn+1) < currentLine.rectangles.length) {
 				annot.selectedColumn += 1;
-			} else if ((annot.selectedColumn+1) === currentLine.length) {
+			} else if ((annot.selectedColumn+1) === currentLine.rectangles.length) {
 				annot.selectedColumn = 0;
 				annot.selectedLine += 1;
 			}
@@ -77,51 +77,58 @@ const createImageAnnotations = () => {
 
 export const imageAnnotations = createImageAnnotations();
 
-const extractRectangles = (text) => {
+const extractLines = (text, bottomText) => {
 	const textLines = text.split("\n");
-		const lines = [];
-		textLines.forEach(textline => {
-			try {
-				if (textline && textline !== "") {
-					const rectsTextArray = Array.from(textline.matchAll(/\((.*?)\)/g)).map(el => el[1]);
-					const line = [];
-					rectsTextArray.forEach(textrect => {
-						const nums = textrect.split(", ").map(el => +el);
-						line.push({
-							left: nums[0],
-							top: nums[1],
-							width: nums[2],
-							height: nums[3],
-							data: ""
-						});
+	const bottomLines = bottomText.split("\n");
+	const lines = [];
+	textLines.forEach((textline, i) => {
+		try {
+			if (textline && textline !== "") {
+				const rectsTextArray = Array.from(textline.matchAll(/\((.*?)\)/g)).map(el => el[1]);
+				const rects = [];
+				rectsTextArray.forEach(textrect => {
+					const nums = textrect.split(", ").map(el => +el);
+					rects.push({
+						left: nums[0],
+						top: nums[1],
+						width: nums[2],
+						height: nums[3],
+						data: ""
 					});
-					if (line.length > 0) {
-						lines.push(line);
-					}
+				});
+				if (rects.length > 0) {
+					lines.push({rectangles: rects, bottom: +bottomLines[i]});
 				}
-			} catch(e) {
-				// ignore
 			}
-		});
+		} catch(e) {
+			// ignore
+		}
+	});
 
-		return lines;
+	return lines;
 };
 
 export const loadImageAnnotations = async () => {
 	if (imageAnnotations.areLoaded()) { return; }
 
-	const imageLocation = '/image.jpg';
-	const boundingRectsLocation = '/boundingrects.csv';
+	const imageLocation = '/image1.jpg';
+	const boundingRectsLocation = '/boundingrects1.csv';
+	const linesLocations = '/linepositions1.csv';
+	const imageWidth = 4709;
+	const imageHeight = 426;
 
-	const res = await fetch(boundingRectsLocation);
-	const data = await res.text();
-	const lines = extractRectangles(data);
+	const bottomRes = await fetch(linesLocations);
+	const bottomData = await bottomRes.text();
+
+	const rectRes = await fetch(boundingRectsLocation);
+	const rectData = await rectRes.text();
+	const lines = extractLines(rectData, bottomData);
 	imageAnnotations.set({
-		rectangleLines: lines,
+		lines: lines,
 		loaded: true,
 		imageName: imageLocation,
-		imageWidth: 2500,
-		imageHeight: 1207,
+		imageWidth: imageWidth,
+		imageHeight: imageHeight,
 		selectedLine: 0,
 		selectedColumn: 0,
 		showAnnotations: true
@@ -129,21 +136,25 @@ export const loadImageAnnotations = async () => {
 };
 
 export const rectangles = derived(imageAnnotations, $imageAnnotations => {
-		const lines = $imageAnnotations.rectangleLines;
+		const lines = $imageAnnotations.lines;
 		const rects = [];
-		lines.forEach(line => { rects.push(...line); });
+		lines.forEach(line => { rects.push(...line.rectangles); });
 		return rects;
 	}
 );
 
+export const currentLine = derived(imageAnnotations, $imageAnnotations => {
+	return $imageAnnotations.lines[$imageAnnotations.selectedLine];
+});
+
 export const selectedRectangleIdx = derived(imageAnnotations, $imageAnnotations => {
 		let idx = 0;
-		$imageAnnotations.rectangleLines.forEach((line, i) => {
+		$imageAnnotations.lines.forEach((line, i) => {
 			if (i > $imageAnnotations.selectedLine) {
 				return;
 			}
 			if (i < $imageAnnotations.selectedLine) {
-				idx += line.length;
+				idx += line.rectangles.length;
 				return;
 			}
 			if (i === $imageAnnotations.selectedLine) {
@@ -156,8 +167,8 @@ export const selectedRectangleIdx = derived(imageAnnotations, $imageAnnotations 
 
 export const annotatedData = derived(imageAnnotations, $imageAnnotations => {
 	let data = "";
-	$imageAnnotations.rectangleLines.forEach(line => {
-		line.forEach(rectangle => {
+	$imageAnnotations.lines.forEach(line => {
+		line.rectangles.forEach(rectangle => {
 			data += rectangle.data;
 		});
 		data += "\n";

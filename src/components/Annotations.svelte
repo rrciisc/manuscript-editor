@@ -1,8 +1,16 @@
 <script>
 	import CharRectangle from './CharRectangle.svelte';
-	import { rectangles } from '../stores/annotationsstore.js';
+	import { rectangles, currentLine } from '../stores/annotationsstore.js';
 </script>
 
-{#each $rectangles as rectangle, i}
+<style>
+	hr {
+		position: absolute;
+		width: 100%;
+	}
+</style>
+
+<hr style="top: {$currentLine.bottom+10}px" />
+{#each $currentLine.rectangles as rectangle, i}
 	<CharRectangle {...rectangle} idx={i} />
 {/each}

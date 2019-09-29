@@ -1,6 +1,6 @@
 <script>
 	import { tick, onMount } from 'svelte';
-	import { selectedRectangleIdx, imageAnnotations } from '../stores/annotationsstore.js';
+	import { selectedRectangleIdx, imageAnnotations, currentLine } from '../stores/annotationsstore.js';
 
 	export let top;
 	export let left;
@@ -8,6 +8,8 @@
 	export let height;
 	export let idx;
 	export let data;
+
+	$: linebottom = $currentLine.bottom;
 
 	let box; let inputBox; let line;
 	let boxClass = '';
@@ -44,7 +46,7 @@
 
 	// TODO: below connected line code have some issue so not using
 	const bringTextIntoFocus = async () => {
-		if ($selectedRectangleIdx === idx) {
+		if ($imageAnnotations.selectedColumn === idx) {
 			boxClass = 'focus';
 			if (box) {
 				box.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
@@ -69,7 +71,7 @@
 		inputBox && inputBox.focus();
 	};
 
-	$: if ($selectedRectangleIdx === idx) {
+	$: if ($imageAnnotations.selectedColumn === idx) {
 		boxClass = 'focus';
 		box && box.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
 		setFocus();
@@ -110,20 +112,21 @@
 
 	.focus {
 		border-color: greenyellow;
+		transform: scale(1.5);
 	}
 
 	input {
 		z-index: 10;
+		position: absolute;
 	}
 </style>
 
 <div class="{boxClass}"
-		style="top: {top}px; left: {left}px; width: {width}px; height: {height}px;"
-		bind:this={box}
-	>
-		<input class="appearance-none {boxClass === 'focus' ? '' : 'hidden'} leading-tight w-12 h-12 px-1 py-1 absolute bg-purple-200"
-			style="top: -6rem; left: 3rem"
-			type="text" bind:this={inputBox}
-			on:keydown={handleKeyDown}
-			bind:value={data} />
-</div>
+	style="top: {top}px; left: {left}px; width: {width}px; height: {height}px;"
+	bind:this={box}
+></div>
+<input class="appearance-none {boxClass === 'focus' ? '' : 'hidden'} leading-tight w-12 h-12 px-1 py-1 absolute bg-purple-200"
+	style="top: {linebottom+10}px; left: {left}px"
+	type="text" bind:this={inputBox}
+	on:keydown={handleKeyDown}
+	bind:value={data} />

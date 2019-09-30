@@ -1,10 +1,15 @@
 <script>
 	import { onMount } from 'svelte';
 	import { loadImageAnnotations, imageAnnotations } from '../stores/annotationsstore.js';
+	import { users } from '../stores/usersstore.js';
 
 	export let segment;
 	onMount(async () => {
 		document.addEventListener('keydown', event => {
+			if (segment !== "editor") {
+				return;
+			}
+
 			// enter : toggle visibility of annotations
 			if (event.keyCode === 13) {
 				imageAnnotations.toggleAnnotationsVisibility();
@@ -14,6 +19,7 @@
 			}
 		});
 
+		users.loadUsers();
 		loadImageAnnotations();
 	});
 </script>
@@ -63,8 +69,15 @@
 		display: block;
 	}
 </style>
-<nav class="hidden">
+<nav>
 	<ul>
-		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>editor</a></li>
+		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>users</a></li>
+		{#if segment === "adduser"}
+			<li><a class='{segment === "adduser" ? "selected" : ""}' href='adduser'>add user</a></li>
+		{:else if segment === "manuscripts"}
+			<li><a class='{segment === "manuscripts" ? "selected" : ""}' href='manuscripts'>manuscripts</a></li>
+		{:else if segment === "editor"}
+			<li><a class='{segment === "editor" ? "selected" : ""}' href='editor'>editor</a></li>
+		{/if}
 	</ul>
 </nav>

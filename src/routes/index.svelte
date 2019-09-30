@@ -1,19 +1,15 @@
 <script>
-	import ReadonlyText from '../components/ReadonlyText.svelte';
-	import ImageCanvas from  '../components/ImageCanvas.svelte';
-	import Annotations from  '../components/Annotations.svelte';
-	import { imageAnnotations } from '../stores/annotationsstore.js';
+	import { users } from '../stores/usersstore.js';
+	import UserCard from '../components/UserCard.svelte';
 </script>
 
-{#if !$imageAnnotations.loaded}
-	<div class="text-center w-full">Loading ...</div>
-{:else}
-<div>
-	<ReadonlyText />
-	<ImageCanvas>
-		{#if $imageAnnotations.showAnnotations}
-			<Annotations />
-		{/if}
-	</ImageCanvas>
+<div class="flex flex-wrap mb-2">
+	{#if !$users.loaded}
+		<div class="text-center w-full">Loading ...</div>
+	{:else}
+		{#each $users.users as user}
+			<UserCard {...user} />
+		{/each}
+		<UserCard isCreateCard={true} />
+	{/if}
 </div>
-{/if}

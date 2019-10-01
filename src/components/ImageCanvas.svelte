@@ -48,7 +48,7 @@
 		transform-origin: 0 0;
 	}
 	#container {
-		height: 65vh;
+		height: 60vh;
 	}
 </style>
 

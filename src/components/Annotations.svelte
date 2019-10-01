@@ -10,7 +10,7 @@
 	}
 </style>
 
-<hr style="top: {$currentLine.bottom+10}px" />
+<hr style="top: {$currentLine.bottom}px" />
 {#each $currentLine.rectangles as rectangle, i}
 	<CharRectangle {...rectangle} idx={i} />
 {/each}

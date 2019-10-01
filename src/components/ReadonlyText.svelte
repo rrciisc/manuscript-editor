@@ -5,7 +5,7 @@
 
 <style>
 textarea {
-	height: 25vh;
+	height: 20vh;
 }
 </style>
 

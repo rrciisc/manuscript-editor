@@ -1,7 +1,5 @@
-import { getHeaders, createDocument } from './azureutility.js';
+import { getHeaders, createDocument, STORAGE_ACCOUNT_ENDPOINT, LOAD_USERS_URL, CREATE_USER_URL } from './azureutility.js';
 import { writable } from 'svelte/store';
-
-export const STORAGE_ACCOUNT_ENDPOINT = "https://roopchoueditorapp.blob.core.windows.net";
 
 const createUsersStore = () => {
 	const { subscribe, set, update } = writable({
@@ -22,8 +20,7 @@ const createUsersStore = () => {
 	const loadUsers = async () => {
 		if (areLoaded()) { return; }
 
-		const url = `${STORAGE_ACCOUNT_ENDPOINT}/?comp=list&prefix=user&include=metadata&maxresults=20`;
-		const response = await fetch(url, { method: 'GET', mode: 'cors', cache: 'no-cache', headers: getHeaders('loadusers') });
+		const response = await fetch(LOAD_USERS_URL, { method: 'GET', mode: 'cors', cache: 'no-cache', headers: getHeaders('loadusers') });
 		const responseText = await response.text();
 		const loadedUsers = Array.prototype.map.call(
 			createDocument(responseText).querySelectorAll('Containers > Container'),
@@ -55,8 +52,7 @@ const createUsersStore = () => {
 		}
 
 		const userId = `user-${getLatestId()+1}`;
-		const url = `${STORAGE_ACCOUNT_ENDPOINT}/${userId}?restype=container`;
-		const response = await fetch(url, { method: 'PUT', mode: 'cors', cache: 'no-cache',
+		const response = await fetch(CREATE_USER_URL(userId), { method: 'PUT', mode: 'cors', cache: 'no-cache',
 			headers: getHeaders('createuser', {userName, userId})
 		});
 		if (response.status !== 201) {

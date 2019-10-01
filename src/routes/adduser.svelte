@@ -1,4 +1,5 @@
 <script>
+	import * as sapper from '@sapper/app';
   import { users } from '../stores/usersstore.js';
   export let userName = '';
 

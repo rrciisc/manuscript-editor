@@ -73,11 +73,13 @@
 	<ul>
 		<li><a class='{segment === undefined ? "selected" : ""}' href='.'>users</a></li>
 		{#if segment === "adduser"}
-			<li><a class='{segment === "adduser" ? "selected" : ""}' href='adduser'>add user</a></li>
+			<li><a class='{segment === "adduser" ? "selected" : ""}' href='.'>add user</a></li>
 		{:else if segment === "manuscripts"}
-			<li><a class='{segment === "manuscripts" ? "selected" : ""}' href='manuscripts'>manuscripts</a></li>
+			<li><a class='{segment === "manuscripts" ? "selected" : ""}' href='.'>manuscripts</a></li>
+		{:else if segment === "addmanuscript"}
+			<li><a class='{segment === "addmanuscript" ? "selected" : ""}' href='.'>add manuscript</a></li>
 		{:else if segment === "editor"}
-			<li><a class='{segment === "editor" ? "selected" : ""}' href='editor'>editor</a></li>
+			<li><a class='{segment === "editor" ? "selected" : ""}' href='.'>editor</a></li>
 		{/if}
 	</ul>
 </nav>

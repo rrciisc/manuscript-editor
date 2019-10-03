@@ -1,10 +1,39 @@
 # WebApp Design
 
-1. Store Books as Blob containers in Azure Storage Account
+1. Store UserBooks as Blob containers in Azure Storage Account
 2. Book's metadata (name, description etc.) will be stored as metadata of container
-3. Each page is a blob inside a container (storage as image)
+3. Each page of book is a blob inside a container (storage as image)
 4. Anonymous access to blob is allowed but enumberation of all blobs of a container, or of all containers in Azure Storage account is not allowed
 
+Sequence:
+1. Upload images
+2. Edit one image
+3. Call webapi to get boxes
+4. Save context and boxes change on service
+
+https://svelte.dev/
+https://sapper.svelte.dev/
+https://tailwindcss.com/
+https://docs.microsoft.com/en-us/rest/api/storageservices/operations-on-containers
+
+Discussion:
+1. Char not outlines: + button for both prepend and append
+2. Cloud functions [frontend + backend]
+3. Thumbnail in left: Only page number
+4. Wall for entry
+
+Previous Tasks:
+1. view books [done] { scrapped }
+2. create a new book [done] { scrapped }
+3. upload pdf of a book [done] { scrapped }
+4. Render 1 page of a book using pdf-js [done] { scrapped }
+5. viewing all pages of a book : https://roopchoueditorapp.blob.core.windows.net/book-1/pdf { scrapped }
+6. edit page of a page (which will allow mapping unicode text to a page)
+7. Zoom levels: 50%, 100%, 200%, 400% [done]
+8. Space and Shift+Space for navigation [done]
+9. Padding of rectangles with 2px [done]
+10. Total dynamic Dom with back linking
+11. Library of 20 manuscripts (editor experience) [upload, save, load back]
 
 # sapper-template
 
@@ -104,3 +133,12 @@ https://jvns.ca/blog/brag-documents/
 
 Stack: FE[sapper + tailwindcss/bulmacss] + BE[google firebase] + Hosting[netlify]
 https://adamwathan.me/uses/
+https://github.com/ryanatkn/awesome-svelte-resources
+https://forestry.io/pricing/
+https://mozilla.github.io/pdf.js/
+https://svgjs.com/docs/2.7/
+http://svgtutorial.com/manipulating-svg-with-javascript/
+https://keybase.io/ (slack / teams alternative)
+https://internetingishard.com/html-and-css/advanced-positioning/
+Zoom Lens in CSS: https://www.w3docs.com/snippets/javascript/how-to-create-an-image-zoom-using-css-and-javascript.html
+http://usefulangle.com/post/24/pdf-to-jpeg-png-with-pdfjs

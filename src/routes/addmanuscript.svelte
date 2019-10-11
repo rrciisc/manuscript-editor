@@ -8,14 +8,12 @@
   $: isSubmitDisabled = !localImageFileName || !imageWidth || !imageHeight;
   
   async function handleSubmit(event) {
-    const fileData = new FormData();
-		fileData.append('files[]', event.target.file.files[0]);
-		const options = {
+    const options = {
 			width: imageWidth,
 			height: imageHeight
 		};
-		await manuscripts.createManuscript(options, fileData);
-		sapper.goto(`manuscripts?id=${manuscripts.getUserId()}`);
+    await manuscripts.createManuscript(options, event.target.file.files[0]);
+    sapper.goto(`manuscripts?id=${manuscripts.getUserId()}`);
   }
 </script>
 
@@ -47,7 +45,7 @@
              id="inline-local-file-name"
              placeholder="Pick a jpg file to upload"
              type="file"
-             accept=".jpg" />
+             accept="image/jpeg" />
     </div>
   </div>
   <div class="md:flex md:items-center">

@@ -14,7 +14,7 @@
 	export let userName = '';
 
 	onMount(async () => {
-		manuscripts.loadManuscripts(id);
+		manuscripts.loadManuscripts(id); // TODO: check if making network call for same user
 	});
 </script>
 
@@ -23,7 +23,7 @@
 		<div class="text-center w-full">Loading ...</div>
 	{:else}
 		{#each $manuscripts.manuscripts as manuscript}
-			<ManuscriptCard {...manuscript} />
+			<ManuscriptCard imageUrl={manuscript.imageUrl} id={manuscript.id} />
 		{/each}
 		<ManuscriptCard isCreateCard={true} />
 	{/if}

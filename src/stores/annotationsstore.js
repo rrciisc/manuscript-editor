@@ -1,4 +1,5 @@
 import { writable, derived } from 'svelte/store';
+import { manuscripts } from './manuscriptsstore.js';
 
 const createImageAnnotations = () => {
 	const { subscribe, set, update } = writable({
@@ -108,27 +109,37 @@ const extractLines = (text, bottomText) => {
 	return lines;
 };
 
-export const loadImageAnnotations = async () => {
-	if (imageAnnotations.areLoaded()) { return; }
+export const loadImageAnnotations = async (userId, id) => {
+	imageAnnotations.set({
+		lines: [],
+		loaded: false,
+		imageName: '',
+		imageWidth: 0,
+		imageHeight: 0,
+		selectedLine: 0,
+		selectedColumn: 0,
+		showAnnotations: true
+	});
 
-	const imageLocation = '/image1.jpg';
-	const boundingRectsLocation = '/boundingrects1.csv';
-	const linesLocations = '/linepositions1.csv';
-	const imageWidth = 4709;
-	const imageHeight = 426;
+	if (manuscripts.getUserId() !== userId) {
+		await manuscripts.loadManuscripts(userId);
+	}
 
-	const bottomRes = await fetch(linesLocations);
+	// first fetch manuscript metadata
+	const manuscript = manuscripts.getManuscriptById(id);
+
+	const bottomRes = await fetch(manuscript.linesUrl);
 	const bottomData = await bottomRes.text();
 
-	const rectRes = await fetch(boundingRectsLocation);
+	const rectRes = await fetch(manuscript.rectanglesUrl);
 	const rectData = await rectRes.text();
 	const lines = extractLines(rectData, bottomData);
 	imageAnnotations.set({
 		lines: lines,
 		loaded: true,
-		imageName: imageLocation,
-		imageWidth: imageWidth,
-		imageHeight: imageHeight,
+		imageName: manuscript.imageUrl,
+		imageWidth: manuscript.width,
+		imageHeight: manuscript.height,
 		selectedLine: 0,
 		selectedColumn: 0,
 		showAnnotations: true

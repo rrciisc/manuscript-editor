@@ -7,7 +7,7 @@
 
 Sequence:
 1. Upload image, rectangles, lines [done]
-2. Edit one image (get rectangles, lines as well)
+2. Edit one image (get rectangles, lines as well) [done]
 3. Save context and boxes change on service
 
 https://svelte.dev/

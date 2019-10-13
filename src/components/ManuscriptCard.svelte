@@ -1,9 +1,8 @@
 <script>
-	export let id = null;
+	import { manuscripts } from '../stores/manuscriptsstore.js';
+
 	export let imageUrl = '';
-	export let lastModified = '';
-	export let width = '';
-	export let height = '';
+	export let id = null;
 	export let isCreateCard = false;
 </script>
 
@@ -22,7 +21,7 @@
 	<div class="card bg-white flex flex-row border rounded border-gray-400 leading-normal">
 		<img class="w-64 mr-6" src="{imageUrl}" alt="Avatar of Manuscript Image">
 		<div class="text-sm justify-center mt-6">
-			<a class="leading-none inline-block hover:underline text-indigo-500" href="editor?id={id}&imageUrl={imageUrl}">{id}</a>
+			<a class="leading-none inline-block hover:underline text-indigo-500" href="editor?id={id}&userId={$manuscripts.userId}">{id}</a>
 		</div>
 	</div>
 {/if}

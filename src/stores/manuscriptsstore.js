@@ -134,7 +134,20 @@ const createManuscriptsStore = () => {
 		});
 	};
 
-	return { subscribe, set, update, areLoaded, getLatestId, getUserId, loadManuscripts, createManuscript };
+	const getManuscriptById = (id) => {
+		let manuscript = undefined;
+		update(s => {
+			s.manuscripts.forEach(m => {
+				if (m.id === id) {
+					manuscript = m;
+				}
+			});
+			return s;
+		});
+		return manuscript;
+	};
+
+	return { subscribe, set, update, areLoaded, getLatestId, getUserId, loadManuscripts, createManuscript, getManuscriptById };
 };
 
 export const manuscripts = createManuscriptsStore();

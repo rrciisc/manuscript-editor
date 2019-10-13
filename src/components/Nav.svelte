@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { loadImageAnnotations, imageAnnotations } from '../stores/annotationsstore.js';
+	import { imageAnnotations } from '../stores/annotationsstore.js';
 	import { users } from '../stores/usersstore.js';
 
 	export let segment;
@@ -20,7 +20,6 @@
 		});
 
 		users.loadUsers();
-		loadImageAnnotations();
 	});
 </script>
 

@@ -7,7 +7,7 @@ export const CREATE_USER_URL = (userId) => `${STORAGE_ACCOUNT_ENDPOINT}/${userId
 export const LOAD_MANUSCRIPTS_URL = (userId) => `${STORAGE_ACCOUNT_ENDPOINT}/${userId}?restype=container&comp=list&prefix=image&include=metadata&maxresults=50`;
 export const RECTANGLES_URL = (userId, imageId) => `${STORAGE_ACCOUNT_ENDPOINT}/${userId}/rectangles-${imageId}`;
 export const LINES_BOTTOM_URL = (userId, imageId) => `${STORAGE_ACCOUNT_ENDPOINT}/${userId}/linesbottom-${imageId}`;
-export const IMAGE_URL = (userId, imageId) => `${STORAGE_ACCOUNT_ENDPOINT}/${userId}/${imageId}`;
+export const FILE_URL = (userId, fileName) => `${STORAGE_ACCOUNT_ENDPOINT}/${userId}/${fileName}`;
 
 export const getHeaders = (operationName, options) => {
 	const ContentMD5 = ''; let ContentType = ''; const xDate = '';
@@ -42,7 +42,16 @@ export const getHeaders = (operationName, options) => {
 														 'x-ms-meta-id:' + headers['x-ms-meta-id'] + "\n" +
 														 'x-ms-meta-width:' + headers['x-ms-meta-width'] + "\n" +
 														 'x-ms-version:' + headers['x-ms-version'];
-			CanonicalizedResource += `${options.userId}/${options.imageId}`;
+			CanonicalizedResource += `${options.userId}/${options.fileName}`;
+			break;
+		case 'uploadtext':
+			VERB = 'PUT';
+			ContentType = headers['Content-Type'] = 'text/plain';
+			headers['x-ms-blob-type'] = 'BlockBlob';
+			CanonicalizedHeaders = 'x-ms-blob-type:' + headers['x-ms-blob-type'] + "\n" +
+														 'x-ms-date:' + headers['x-ms-date'] + "\n" +
+														 'x-ms-version:' + headers['x-ms-version'];
+			CanonicalizedResource += `${options.userId}/${options.fileName}`;
 			break;
 		case 'uploadbook':
 			VERB = 'PUT';

@@ -6,10 +6,9 @@
 4. Anonymous access to blob is allowed but enumberation of all blobs of a container, or of all containers in Azure Storage account is not allowed
 
 Sequence:
-1. Upload images
-2. Edit one image
-3. Call webapi to get boxes
-4. Save context and boxes change on service
+1. Upload image, rectangles, lines [done]
+2. Edit one image (get rectangles, lines as well)
+3. Save context and boxes change on service
 
 https://svelte.dev/
 https://sapper.svelte.dev/

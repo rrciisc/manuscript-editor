@@ -1,4 +1,4 @@
-import { getHeaders, LOAD_MANUSCRIPTS_URL, createDocument, IMAGE_URL } from './azureutility.js';
+import { getHeaders, LOAD_MANUSCRIPTS_URL, createDocument, FILE_URL } from './azureutility.js';
 import { writable } from 'svelte/store';
 
 const createManuscriptsStore = () => {
@@ -29,7 +29,7 @@ const createManuscriptsStore = () => {
 			createDocument(responseText).querySelectorAll('Blobs > Blob'),
 			blob => {
 				let manuscript = {
-					imageUrl: IMAGE_URL(userId, blob.querySelector('Name').textContent),
+					imageUrl: FILE_URL(userId, blob.querySelector('Name').textContent),
 					lastModified: blob.querySelector('Properties > Last-Modified').textContent,
 					width: blob.querySelector('Metadata > width').textContent,
 					height: blob.querySelector('Metadata > height').textContent,
@@ -52,6 +52,9 @@ const createManuscriptsStore = () => {
 					manuscript.id = Number(manuscript.id);
 				}
 
+				manuscript['rectanglesUrl'] = FILE_URL(userId, `rectangles-${manuscript.id}.csv`);
+				manuscript['linesUrl'] = FILE_URL(userId, `lines-${manuscript.id}.csv`);
+
 				return manuscript;
 			}
 		);
@@ -73,34 +76,62 @@ const createManuscriptsStore = () => {
 		}
 
 		const newId = getLatestId()+1;
-		const imageId = `image-${newId}.jpg`;
-		const response = await fetch(IMAGE_URL(getUserId(), imageId), { method: 'PUT', mode: 'cors', cache: 'no-cache',
-			headers: getHeaders('createimage', {userId: getUserId(), imageId, id: newId, width: options.width, height: options.height }),
-			body: fileData
-		});
-		if (response.status !== 201) {
-			console.error(`image file upload failed: ${response.status}`);
-		} else {
-			let lastModified = '';
-			response.headers.forEach((val, key) => {
-				if (key.toLowerCase() === "last-modified") {
-					lastModified = val;
-				}
-			});
-			let newManuscript = {
-				imageUrl: IMAGE_URL(getUserId(), imageId),
-				lastModified: new Date(lastModified),
-				width: Number(options.width),
-				height: Number(options.height),
-				id: Number(newId)
-			};
 
-			update(lib => {
-				lib.manuscripts = [...lib.manuscripts, newManuscript];
-				lib.latestManuscriptId = newManuscript.id;
-				return lib;
-			});
+		// first upload rectangles file
+		const rectsFileName = `rectangles-${newId}.csv`;
+		const rectsUploadResponse = await fetch(FILE_URL(getUserId(), rectsFileName), { method: 'PUT', mode: 'cors', cache: 'no-cache',
+			headers: getHeaders('uploadtext', {userId: getUserId(), fileName: rectsFileName }),
+			body: options.rectsFile
+		});
+		if (rectsUploadResponse.status !== 201) {
+			console.error(`rectangles file upload failed: ${rectsUploadResponse.status}`);
+			return;
 		}
+
+		// next upload lines file
+		const linesFileName = `lines-${newId}.csv`;
+		const linesUploadResponse = await fetch(FILE_URL(getUserId(), linesFileName), { method: 'PUT', mode: 'cors', cache: 'no-cache',
+			headers: getHeaders('uploadtext', {userId: getUserId(), fileName: linesFileName }),
+			body: options.linesFile
+		});
+		if (linesUploadResponse.status !== 201) {
+			console.error(`lines file upload failed: ${linesUploadResponse.status}`);
+			return;
+		}
+
+		// finally upload image file
+		const imageName = `image-${newId}.jpg`;
+		const imgUploadResponse = await fetch(FILE_URL(getUserId(), imageName), { method: 'PUT', mode: 'cors', cache: 'no-cache',
+			headers: getHeaders('createimage', {userId: getUserId(), fileName: imageName, id: newId, width: options.width, height: options.height }),
+			body: options.imageFile
+		});
+		if (imgUploadResponse.status !== 201) {
+			console.error(`image file upload failed: ${imgUploadResponse.status}`);
+			return;
+		}
+
+		// update in-memory structures
+		let lastModified = '';
+		imgUploadResponse.headers.forEach((val, key) => {
+			if (key.toLowerCase() === "last-modified") {
+				lastModified = val;
+			}
+		});
+		let newManuscript = {
+			imageUrl: FILE_URL(getUserId(), imageName),
+			rectanglesUrl: FILE_URL(getUserId(), rectsFileName),
+			linesUrl: FILE_URL(getUserId(), linesFileName),
+			lastModified: new Date(lastModified),
+			width: Number(options.width),
+			height: Number(options.height),
+			id: Number(newId)
+		};
+
+		update(lib => {
+			lib.manuscripts = [...lib.manuscripts, newManuscript];
+			lib.latestManuscriptId = newManuscript.id;
+			return lib;
+		});
 	};
 
 	return { subscribe, set, update, areLoaded, getLatestId, getUserId, loadManuscripts, createManuscript };

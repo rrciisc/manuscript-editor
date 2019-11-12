@@ -28,33 +28,36 @@ const createManuscriptsStore = () => {
 		const loadedManuscripts = Array.prototype.map.call(
 			createDocument(responseText).querySelectorAll('Blobs > Blob'),
 			blob => {
+				let w = blob.querySelector('Metadata > width');
+				let h = blob.querySelector('Metadata > height');
+				let m_id = blob.querySelector('Metadata > id');
 				let manuscript = {
 					imageUrl: FILE_URL(userId, blob.querySelector('Name').textContent),
 					lastModified: blob.querySelector('Properties > Last-Modified').textContent,
-					width: blob.querySelector('Metadata > width').textContent,
-					height: blob.querySelector('Metadata > height').textContent,
-					id: blob.querySelector('Metadata > id').textContent
+					width: "0",
+					height: "0",
+					id: "-1"
 				};
 
-				if (manuscript.width) {
-					manuscript.width = Number(manuscript.width);
+				if (w && w.textContent) {
+					manuscript.width = Number(w.textContent);
 				}
 
-				if (manuscript.height) {
-					manuscript.height = Number(manuscript.height);
+				if (h && h.textContent) {
+					manuscript.height = Number(h.textContent);
 				}
 
 				if (manuscript.lastModified) {
 					manuscript.lastModified = new Date(manuscript.lastModified);
 				}
 
-				if (manuscript.id) {
-					manuscript.id = Number(manuscript.id);
+				if (m_id && m_id.textContent) {
+					manuscript.id = Number(m_id.textContent);
+					manuscript['rectanglesUrl'] = FILE_URL(userId, `rectangles-${manuscript.id}.csv`);
+					manuscript['linesUrl'] = FILE_URL(userId, `lines-${manuscript.id}.csv`);
 				}
 
-				manuscript['rectanglesUrl'] = FILE_URL(userId, `rectangles-${manuscript.id}.csv`);
-				manuscript['linesUrl'] = FILE_URL(userId, `lines-${manuscript.id}.csv`);
-
+				
 				return manuscript;
 			}
 		);
@@ -77,32 +80,13 @@ const createManuscriptsStore = () => {
 
 		const newId = getLatestId()+1;
 
-		// first upload rectangles file
 		const rectsFileName = `rectangles-${newId}.csv`;
-		const rectsUploadResponse = await fetch(FILE_URL(getUserId(), rectsFileName), { method: 'PUT', mode: 'cors', cache: 'no-cache',
-			headers: getHeaders('uploadtext', {userId: getUserId(), fileName: rectsFileName }),
-			body: options.rectsFile
-		});
-		if (rectsUploadResponse.status !== 201) {
-			console.error(`rectangles file upload failed: ${rectsUploadResponse.status}`);
-			return;
-		}
-
-		// next upload lines file
 		const linesFileName = `lines-${newId}.csv`;
-		const linesUploadResponse = await fetch(FILE_URL(getUserId(), linesFileName), { method: 'PUT', mode: 'cors', cache: 'no-cache',
-			headers: getHeaders('uploadtext', {userId: getUserId(), fileName: linesFileName }),
-			body: options.linesFile
-		});
-		if (linesUploadResponse.status !== 201) {
-			console.error(`lines file upload failed: ${linesUploadResponse.status}`);
-			return;
-		}
 
 		// finally upload image file
 		const imageName = `image-${newId}.jpg`;
 		const imgUploadResponse = await fetch(FILE_URL(getUserId(), imageName), { method: 'PUT', mode: 'cors', cache: 'no-cache',
-			headers: getHeaders('createimage', {userId: getUserId(), fileName: imageName, id: newId, width: options.width, height: options.height }),
+			headers: getHeaders('createimage', {userId: getUserId(), fileName: imageName}),
 			body: options.imageFile
 		});
 		if (imgUploadResponse.status !== 201) {
@@ -121,10 +105,11 @@ const createManuscriptsStore = () => {
 			imageUrl: FILE_URL(getUserId(), imageName),
 			rectanglesUrl: FILE_URL(getUserId(), rectsFileName),
 			linesUrl: FILE_URL(getUserId(), linesFileName),
-			lastModified: new Date(lastModified),
-			width: Number(options.width),
-			height: Number(options.height),
-			id: Number(newId)
+			lastModified: new Date(lastModified)//,
+			// how will this get refreshed in memory?
+			//width: Number(options.width),
+			//height: Number(options.height),
+			//id: Number(newId)
 		};
 
 		update(lib => {

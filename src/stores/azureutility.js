@@ -1,5 +1,6 @@
-const masterKey = "Gg8iXkSPlLJQv6nKq5yrejRqWRDzCyifpu+YB+rhcQYZBDLkg5CuOBY3DoCktwaoCd6QeZT6DqD5Jfj3Y84eqA==";
-export const STORAGE_ACCOUNT_ENDPOINT = "https://roopchoueditorapp.blob.core.windows.net";
+const masterKey = "fwLeaR0i6bQFTFGlSq4ifoMauLNaO9LgmG3Uup15rASKG1XW5DC82IQbNstLZwvUVBD2I77vNCZCgaDMMGFaiw==";
+
+export const STORAGE_ACCOUNT_ENDPOINT = "https://manuscriptstore.blob.core.windows.net";
 let domParser = undefined;
 
 export const LOAD_USERS_URL = `${STORAGE_ACCOUNT_ENDPOINT}/?comp=list&prefix=user&include=metadata&maxresults=20`;
@@ -17,7 +18,7 @@ export const getHeaders = (operationName, options) => {
 		'x-ms-version': '2018-03-28'
 	};
 
-	let VERB = ''; let CanonicalizedHeaders = ''; let CanonicalizedResource = '/roopchoueditorapp/';
+	let VERB = ''; let CanonicalizedHeaders = ''; let CanonicalizedResource = '/manuscriptstore/';
 	switch(operationName) {
 		case 'createuser':
 			VERB = 'PUT';
@@ -33,14 +34,8 @@ export const getHeaders = (operationName, options) => {
 			VERB = 'PUT';
 			ContentType = headers['Content-Type'] = 'image/jpeg';
 			headers['x-ms-blob-type'] = 'BlockBlob';
-			headers['x-ms-meta-height'] = options.height;
-			headers['x-ms-meta-id'] = options.id;
-			headers['x-ms-meta-width'] = options.width;
 			CanonicalizedHeaders = 'x-ms-blob-type:' + headers['x-ms-blob-type'] + "\n" +
 														 'x-ms-date:' + headers['x-ms-date'] + "\n" +
-														 'x-ms-meta-height:' + headers['x-ms-meta-height'] + "\n" +
-														 'x-ms-meta-id:' + headers['x-ms-meta-id'] + "\n" +
-														 'x-ms-meta-width:' + headers['x-ms-meta-width'] + "\n" +
 														 'x-ms-version:' + headers['x-ms-version'];
 			CanonicalizedResource += `${options.userId}/${options.fileName}`;
 			break;
@@ -88,7 +83,7 @@ export const getHeaders = (operationName, options) => {
 
 	const hash = CryptoJS.HmacSHA256(strToSign, key);
 	const hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
-	const authToken = "SharedKeyLite roopchoueditorapp:"+hashInBase64;
+	const authToken = "SharedKeyLite manuscriptstore:"+hashInBase64;
 	headers['Authorization'] = authToken;
 	return headers;
 };

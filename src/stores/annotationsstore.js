@@ -97,8 +97,16 @@ const extractLines = (text, bottomText) => {
 						data: ""
 					});
 				});
-				if (rects.length > 0) {
-					lines.push({rectangles: rects, bottom: +bottomLines[i]});
+
+				if (i==0) {
+					if (rects.length > 0) {
+						lines.push({rectangles: rects, bottom: +bottomLines[i], width: +bottomLines[1]- +bottomLines[0]});
+					}
+				}
+				else {
+					if (rects.length > 0) {
+						lines.push({rectangles: rects, bottom: +bottomLines[i], width: +bottomLines[i]- +bottomLines[i-1]});
+					}
 				}
 			}
 		} catch(e) {

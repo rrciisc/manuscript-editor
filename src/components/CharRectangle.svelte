@@ -108,11 +108,14 @@
 		border-style: solid;
 		border-width: 1px;
 		border-color: white;
+		opacity: 0;
 	}
 
 	.focus {
+		border-width: 2px;
 		border-color: greenyellow;
-		transform: scale(1.5);
+		transform: scale(1.1);
+		opacity:1
 	}
 
 	input {
@@ -126,7 +129,7 @@
 	bind:this={box}
 ></div>
 <input class="appearance-none {boxClass === 'focus' ? '' : 'hidden'} leading-tight w-12 h-12 px-1 py-1 absolute bg-purple-200"
-	style="top: {linebottom+10}px; left: {left}px"
+	style="top: {linebottom+10}px; left: {left}px; width:{1.1*width}px; height: {1.1*height}px"
 	type="text" bind:this={inputBox}
 	on:keydown={handleKeyDown}
 	bind:value={data} />
